@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabaseAnon } from "../../../lib/supabase";
+import { useRequireAuth } from "../../../lib/useRequireAuth";
 
 interface Submission {
   id: string;
@@ -86,6 +87,7 @@ const placeholderStyle: React.CSSProperties = {
 
 export default function ReviewPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  useRequireAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [cardVisible, setCardVisible] = useState(true);

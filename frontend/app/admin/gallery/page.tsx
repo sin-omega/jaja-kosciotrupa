@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { supabaseAnon } from "../../../lib/supabase";
 import { startDownload, getJobStatus, getDownloadUrl } from "../../../lib/api";
+import { useRequireAuth } from "../../../lib/useRequireAuth";
 
 interface ShortLink {
   code: string;
@@ -196,6 +197,7 @@ function SubmissionCard({ submission }: { submission: Submission }) {
 
 export default function GalleryPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  useRequireAuth();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
