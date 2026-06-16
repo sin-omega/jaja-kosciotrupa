@@ -8,10 +8,14 @@ import subprocess
 import threading
 from datetime import datetime, timezone
 
+import imageio_ffmpeg
 import yt_dlp
 from supabase import create_client
 
 from config import Config
+
+# Use the ffmpeg binary bundled with imageio-ffmpeg (no apt-get needed)
+FFMPEG = imageio_ffmpeg.get_ffmpeg_exe()
 
 _supabase = create_client(Config.SUPABASE_URL, Config.SUPABASE_SERVICE_ROLE_KEY)
 
@@ -98,6 +102,7 @@ def process_download(submission_id: str, job_id: str) -> None:
             "merge_output_format": "mp4",
             "quiet": True,
             "no_warnings": True,
+            "ffmpeg_location": os.path.dirname(FFMPEG),
         }
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
@@ -106,20 +111,21 @@ def process_download(submission_id: str, job_id: str) -> None:
             raise FileNotFoundError(f"yt-dlp did not produce {raw_path}")
 
         # ── Step 3: Build branded ending (1-second black screen + text) ───
-        platform_label  = _platform_label(platform)
-        nick_line       = f"@{submitter_username}"
-        link_line       = f"{Config.BASE_URL}/r/{code}"
-        join_line       = f"Dolacz: {Config.WHATSAPP_CHANNEL_LINK}"
+        platform_label = _platform_label(platform)
+        nick_line      = f"@{submitter_username}"
+        link_line      = f"{Config.BASE_URL}/r/{code}"
+        join_line      = f"Dolacz: {Config.WHATSAPP_CHANNEL_LINK}"
 
-        # Build drawtext filter chain — four centred lines of white text.
-        # Line spacing: 60px apart, anchored around vertical centre.
-        # We use the default ffmpeg built-in font (no external fontfile needed).
-        line_height  = 60
-        base_y       = "(h/2 - 90)"   # top of first line
+        line_height = 60
+        base_y      = "(h/2 - 90)"
 
         def dt(text: str, line_index: int) -> str:
-            escaped = text.replace("'", r"'\''").replace(":", r"\:").replace("\\", r"\\")
-            y_expr  = f"({base_y} + {line_index * line_height})"
+            escaped = (
+                text.replace("\\", "\\\\")
+                    .replace("'", "\\'")
+                    .replace(":", "\\:")
+            )
+            y_expr = f"({base_y} + {line_index * line_height})"
             return (
                 f"drawtext=text='{escaped}'"
                 f":fontsize=36"
@@ -136,7 +142,7 @@ def process_download(submission_id: str, job_id: str) -> None:
         ])
 
         _run([
-            "ffmpeg", "-y",
+            FFMPEG, "-y",
             "-f", "lavfi",
             "-i", "color=c=black:s=1080x1920:r=30:d=1",
             "-vf", vf,
@@ -151,7 +157,7 @@ def process_download(submission_id: str, job_id: str) -> None:
             f.write(f"file '{ending_path}'\n")
 
         _run([
-            "ffmpeg", "-y",
+            FFMPEG, "-y",
             "-f", "concat",
             "-safe", "0",
             "-i", list_path,
@@ -172,7 +178,6 @@ def process_download(submission_id: str, job_id: str) -> None:
     except Exception as exc:
         _update_job(job_id, status="error", error_message=str(exc))
         _cleanup(job_id)
-        # Remove final output if partially created
         try:
             if os.path.exists(final_path):
                 os.remove(final_path)

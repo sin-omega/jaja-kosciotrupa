@@ -5,3 +5,4 @@ supabase
 yt-dlp
 Pillow
 gunicorn
+imageio-ffmpeg
