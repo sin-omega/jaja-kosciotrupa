@@ -1,7 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  // Allow iframes for YouTube / TikTok embeds
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   async headers() {
     return [
       {
