@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabaseAnon } from "../../lib/supabase";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -26,14 +24,14 @@ export default function LoginPage() {
       password,
     });
 
-    setLoading(false);
-
     if (authError) {
+      setLoading(false);
       setError("Nieprawidłowy email lub hasło.");
       return;
     }
 
-    router.push("/admin/review");
+    // Hard redirect — forces full page reload so middleware picks up the new session cookie
+    window.location.href = "/admin/review";
   };
 
   const inputStyle: React.CSSProperties = {
