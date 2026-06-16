@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabaseAnon } from "../../../lib/supabase";
+import { supabaseAnon } from "../../lib/supabase";
 
-export default function AdminLoginPage() {
+export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -65,7 +65,6 @@ export default function AdminLoginPage() {
           maxWidth: "360px",
           display: "flex",
           flexDirection: "column",
-          gap: "0",
         }}
       >
         <h1

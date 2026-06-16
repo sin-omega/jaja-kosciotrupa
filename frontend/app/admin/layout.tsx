@@ -23,7 +23,7 @@ export default async function AdminLayout({
               cookieStore.set(name, value, options);
             });
           } catch {
-            // Server Component — cannot set cookies here; middleware handles it
+            // Server Component — middleware handles cookie setting
           }
         },
       },
@@ -36,7 +36,7 @@ export default async function AdminLayout({
   } = await supabase.auth.getUser();
 
   if (error || !user) {
-    redirect("/admin/login");
+    redirect("/login");
   }
 
   return <>{children}</>;
