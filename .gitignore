@@ -1,0 +1,42 @@
+# ── Secrets ──────────────────────────────────────────────────
+frontend/.env.local
+backend/.env
+
+# ── Python ───────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# ── Node / Next.js ───────────────────────────────────────────
+node_modules/
+frontend/.next/
+frontend/out/
+frontend/.vercel/
+
+# ── System ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Edytory ──────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Logi ─────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+
+# ── Pliki tymczasowe backendu (pobrane wideo) ─────────────────
+backend/tmp/
+/tmp/*.mp4
+/tmp/*.txt
