@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: video-backend
+    env: python
+    buildCommand: "apt-get install -y ffmpeg && pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: WHATSAPP_CHANNEL_LINK
+        sync: false
+      - key: BASE_URL
+        sync: false
+      - key: ALLOWED_ORIGIN
+        sync: false
